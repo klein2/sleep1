@@ -10,6 +10,7 @@ type EventRow = {
   id: string;
   event_type: "sleep" | "wake";
   event_time: string;
+  created_at: string;
 };
 
 export default function HistoryPage() {
@@ -22,6 +23,17 @@ export default function HistoryPage() {
   const [clearing, setClearing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hasRecords = sleepTimes.length > 0 || wakeTimes.length > 0;
+
+  const sleepSuffix = (eventTime: string, createdAt: string) => {
+    const diffMinutes = (new Date(eventTime).getTime() - new Date(createdAt).getTime()) / (60 * 1000);
+    if (diffMinutes >= 14 && diffMinutes <= 16) {
+      return " (+15m)";
+    }
+    if (diffMinutes >= 29 && diffMinutes <= 31) {
+      return " (+30m)";
+    }
+    return "";
+  };
 
   useEffect(() => {
     setSupabase(getSupabaseBrowserClient());
@@ -48,7 +60,7 @@ export default function HistoryPage() {
     const { startUtc, endUtc } = utcRangeFromKstDate(selectedDate);
     const { data, error: queryError } = await supabase
       .from("events")
-      .select("id, event_type, event_time")
+      .select("id, event_type, event_time, created_at")
       .eq("user_id", user.id)
       .gte("event_time", startUtc)
       .lt("event_time", endUtc)
@@ -63,7 +75,11 @@ export default function HistoryPage() {
     }
 
     const rows = (data ?? []) as EventRow[];
-    setSleepTimes(rows.filter((r) => r.event_type === "sleep").map((r) => formatTimeInSeoul(r.event_time)));
+    setSleepTimes(
+      rows
+        .filter((r) => r.event_type === "sleep")
+        .map((r) => `${formatTimeInSeoul(r.event_time)}${sleepSuffix(r.event_time, r.created_at)}`)
+    );
     setWakeTimes(rows.filter((r) => r.event_type === "wake").map((r) => formatTimeInSeoul(r.event_time)));
     setLoading(false);
   }, [router, selectedDate, supabase]);
