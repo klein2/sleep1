@@ -1,13 +1,13 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { getSiteUrl } from "@/lib/siteUrl";
 
 export default function LoginPage() {
   const router = useRouter();
-  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
+  const [supabase, setSupabase] = useState<ReturnType<typeof getSupabaseBrowserClient> | null>(null);
 
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -16,6 +16,8 @@ export default function LoginPage() {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    setSupabase(getSupabaseBrowserClient());
+
     const params = new URLSearchParams(window.location.search);
     const errorParam = params.get("error");
     if (errorParam) {
@@ -24,6 +26,10 @@ export default function LoginPage() {
   }, []);
 
   useEffect(() => {
+    if (!supabase) {
+      return;
+    }
+
     let mounted = true;
 
     const guard = async () => {
@@ -45,6 +51,12 @@ export default function LoginPage() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!supabase) {
+      setMessage("Supabase client not ready.");
+      return;
+    }
+
     setLoading(true);
     setMessage(null);
 
@@ -111,7 +123,7 @@ export default function LoginPage() {
             />
           </label>
 
-          <button type="submit" className="cta cta-sleep" disabled={loading}>
+          <button type="submit" className="cta cta-sleep" disabled={loading || !supabase}>
             {loading ? "Please wait..." : mode === "signin" ? "Sign In" : "Create Account"}
           </button>
         </form>

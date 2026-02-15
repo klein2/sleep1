@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { formatTimeInSeoul, kstTodayString, moveKstDate, utcRangeFromKstDate } from "@/lib/time";
 
@@ -14,7 +14,7 @@ type EventRow = {
 
 export default function HistoryPage() {
   const router = useRouter();
-  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
+  const [supabase, setSupabase] = useState<ReturnType<typeof getSupabaseBrowserClient> | null>(null);
   const [selectedDate, setSelectedDate] = useState(kstTodayString());
   const [sleepTimes, setSleepTimes] = useState<string[]>([]);
   const [wakeTimes, setWakeTimes] = useState<string[]>([]);
@@ -23,7 +23,15 @@ export default function HistoryPage() {
   const [error, setError] = useState<string | null>(null);
   const hasRecords = sleepTimes.length > 0 || wakeTimes.length > 0;
 
+  useEffect(() => {
+    setSupabase(getSupabaseBrowserClient());
+  }, []);
+
   const fetchDay = useCallback(async () => {
+    if (!supabase) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -65,6 +73,10 @@ export default function HistoryPage() {
   }, [fetchDay]);
 
   const clearSelectedDate = async () => {
+    if (!supabase) {
+      return;
+    }
+
     const confirmed = window.confirm(`Delete all logs for ${selectedDate}?`);
     if (!confirmed || clearing) {
       return;
@@ -155,7 +167,7 @@ export default function HistoryPage() {
           className="subtle-btn danger-btn"
           type="button"
           onClick={clearSelectedDate}
-          disabled={loading || clearing || !hasRecords}
+          disabled={loading || clearing || !hasRecords || !supabase}
         >
           {clearing ? "Clearing..." : "Clear"}
         </button>

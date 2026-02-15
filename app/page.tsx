@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 
 type Toast = {
@@ -18,7 +18,7 @@ const sleepButtons = [
 
 export default function HomePage() {
   const router = useRouter();
-  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
+  const [supabase, setSupabase] = useState<ReturnType<typeof getSupabaseBrowserClient> | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
@@ -29,6 +29,14 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+    setSupabase(getSupabaseBrowserClient());
+  }, []);
+
+  useEffect(() => {
+    if (!supabase) {
+      return;
+    }
+
     let mounted = true;
 
     const loadUser = async () => {
@@ -56,7 +64,7 @@ export default function HomePage() {
   }, [router, supabase]);
 
   const logEvent = async (eventType: "sleep" | "wake", offsetMinutes = 0) => {
-    if (!userId || busy) {
+    if (!supabase || !userId || busy) {
       return;
     }
 
@@ -82,6 +90,9 @@ export default function HomePage() {
   };
 
   const signOut = async () => {
+    if (!supabase) {
+      return;
+    }
     await supabase.auth.signOut();
     router.replace("/login");
   };
@@ -107,7 +118,7 @@ export default function HomePage() {
               key={button.label}
               className="cta cta-sleep"
               type="button"
-              disabled={busy || !userId}
+              disabled={busy || !userId || !supabase}
               onClick={() => logEvent("sleep", button.offsetMinutes)}
             >
               {button.label}
@@ -119,7 +130,7 @@ export default function HomePage() {
           <button
             className="cta cta-wake"
             type="button"
-            disabled={busy || !userId}
+            disabled={busy || !userId || !supabase}
             onClick={() => logEvent("wake")}
           >
             Wake Up
