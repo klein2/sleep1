@@ -93,6 +93,12 @@ export default function HomePage() {
     if (!supabase) {
       return;
     }
+
+    const confirmed = window.confirm("Do you really want to log out?");
+    if (!confirmed) {
+      return;
+    }
+
     await supabase.auth.signOut();
     router.replace("/login");
   };
@@ -101,18 +107,18 @@ export default function HomePage() {
     <main>
       <div className="page">
         <header className="header">
-          <h1 className="title">Sleep &amp; Wake Log</h1>
-          <div style={{ display: "flex", gap: "8px" }}>
-            <Link href="/history" className="link-btn">
-              History
-            </Link>
+          <div className="header-left">
+            <h1 className="title">Sleep &amp; Wake Log</h1>
             <button className="subtle-btn" onClick={signOut} type="button">
               Logout
             </button>
           </div>
+          <Link href="/history" className="link-btn">
+            History
+          </Link>
         </header>
 
-        <div className="stack">
+        <div className="stack stack-main">
           {sleepButtons.map((button) => (
             <button
               key={button.label}

@@ -39,6 +39,12 @@ main {
   justify-content: space-between;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .title {
   margin: 0;
   font-size: 1.05rem;
@@ -189,4 +195,9 @@ main {
 .muted {
   color: #9fb0d6;
   font-size: 0.9rem;
+}
+
+
+.stack-main {
+  margin-top: 10px;
 }
