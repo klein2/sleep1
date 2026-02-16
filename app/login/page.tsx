@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
+  const [totalUsersFailed, setTotalUsersFailed] = useState(false);
 
   useEffect(() => {
     setSupabase(getSupabaseBrowserClient());
@@ -33,15 +34,22 @@ export default function LoginPage() {
       try {
         const response = await fetch("/api/stats/users", { cache: "no-store" });
         if (!response.ok) {
+          if (mounted) {
+            setTotalUsersFailed(true);
+          }
           return;
         }
 
         const json = (await response.json()) as { count?: number };
         if (mounted && typeof json.count === "number") {
           setTotalUsers(json.count);
+        } else if (mounted) {
+          setTotalUsersFailed(true);
         }
       } catch {
-        // Ignore counter errors on login screen.
+        if (mounted) {
+          setTotalUsersFailed(true);
+        }
       }
     };
 
@@ -119,11 +127,13 @@ export default function LoginPage() {
     setLoading(false);
   };
 
+  const totalUsersLabel = totalUsers !== null ? String(totalUsers) : totalUsersFailed ? "unavailable" : "...";
+
   return (
     <main className="login-wrap">
       <div className="login-card">
         <h1 className="title">Sleep &amp; Wake Log</h1>
-        {mode === "signin" && totalUsers !== null ? <p className="muted">(total users: {totalUsers})</p> : null}
+        {mode === "signin" ? <p className="muted">(total users: {totalUsersLabel})</p> : null}
         <p className="muted">{mode === "signin" ? "Sign in" : "Create account"} with email and password.</p>
 
         <form onSubmit={handleSubmit} className="stack">

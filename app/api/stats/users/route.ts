@@ -18,11 +18,12 @@ export async function GET() {
     }
   });
 
-  const { count, error } = await admin.schema("auth").from("users").select("id", { count: "exact", head: true });
+  const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 1 });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ count: count ?? 0 });
+  const total = typeof data?.total === "number" ? data.total : Array.isArray(data?.users) ? data.users.length : 0;
+  return NextResponse.json({ count: total });
 }
