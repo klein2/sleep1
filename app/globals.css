@@ -201,3 +201,11 @@ main {
 .stack-main {
   margin-top: 10px;
 }
+
+.login-total-users {
+  margin: 2px 0 0;
+}
+
+.login-mode-text {
+  margin: 4px 0 2px;
+}

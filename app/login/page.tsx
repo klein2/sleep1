@@ -133,8 +133,8 @@ export default function LoginPage() {
     <main className="login-wrap">
       <div className="login-card">
         <h1 className="title">Sleep &amp; Wake Log</h1>
-        {mode === "signin" ? <p className="muted">(total users: {totalUsersLabel})</p> : null}
-        <p className="muted">{mode === "signin" ? "Sign in" : "Create account"} with email and password.</p>
+        {mode === "signin" ? <p className="muted login-total-users">(total users: {totalUsersLabel})</p> : null}
+        <p className="muted login-mode-text">{mode === "signin" ? "Sign in" : "Create account"} with email and password.</p>
 
         <form onSubmit={handleSubmit} className="stack">
           <label>
