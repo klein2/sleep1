@@ -20,6 +20,7 @@ export default function HomePage() {
   const router = useRouter();
   const [supabase, setSupabase] = useState<ReturnType<typeof getSupabaseBrowserClient> | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string>("Logout");
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
 
@@ -55,6 +56,7 @@ export default function HomePage() {
       }
 
       setUserId(user.id);
+      setUserEmail(user.email ?? "Logout");
     };
 
     loadUser();
@@ -110,7 +112,7 @@ export default function HomePage() {
           <div className="header-left">
             <h1 className="title">Sleep &amp; Wake Log</h1>
             <button className="subtle-btn" onClick={signOut} type="button">
-              Logout
+              {userEmail}
             </button>
           </div>
           <Link href="/history" className="link-btn">

@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [totalUsers, setTotalUsers] = useState<number | null>(null);
 
   useEffect(() => {
     setSupabase(getSupabaseBrowserClient());
@@ -23,6 +24,32 @@ export default function LoginPage() {
     if (errorParam) {
       setMessage(errorParam);
     }
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadTotalUsers = async () => {
+      try {
+        const response = await fetch("/api/stats/users", { cache: "no-store" });
+        if (!response.ok) {
+          return;
+        }
+
+        const json = (await response.json()) as { count?: number };
+        if (mounted && typeof json.count === "number") {
+          setTotalUsers(json.count);
+        }
+      } catch {
+        // Ignore counter errors on login screen.
+      }
+    };
+
+    loadTotalUsers();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -96,6 +123,7 @@ export default function LoginPage() {
     <main className="login-wrap">
       <div className="login-card">
         <h1 className="title">Sleep &amp; Wake Log</h1>
+        {mode === "signin" && totalUsers !== null ? <p className="muted">(total users: {totalUsers})</p> : null}
         <p className="muted">{mode === "signin" ? "Sign in" : "Create account"} with email and password.</p>
 
         <form onSubmit={handleSubmit} className="stack">

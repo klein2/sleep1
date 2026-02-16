@@ -9,6 +9,7 @@ Create `.env.local` from `.env.example`:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_SITE_URL` (recommended, e.g. `https://sleep-log.vercel.app`)
+- `SUPABASE_SERVICE_ROLE_KEY` (server-only, for total user count API)
 
 ## 2) Supabase Setup
 
@@ -47,6 +48,7 @@ npm run dev
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `NEXT_PUBLIC_SITE_URL=https://<production-domain>`
+   - `SUPABASE_SERVICE_ROLE_KEY=<service-role-key>`
 5. Deploy once.
 6. Copy actual production URL and ensure Supabase Auth URL settings include:
    - `Site URL` = production URL
