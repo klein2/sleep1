@@ -209,3 +209,18 @@ main {
 .login-mode-text {
   margin: 4px 0 2px;
 }
+.login-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.login-total-users-inline {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.field-label-login {
+  margin-bottom: 3px;
+}

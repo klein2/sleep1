@@ -132,13 +132,16 @@ export default function LoginPage() {
   return (
     <main className="login-wrap">
       <div className="login-card">
-        <h1 className="title">Sleep &amp; Wake Log</h1>
-        {mode === "signin" ? <p className="muted login-total-users">(total users: {totalUsersLabel})</p> : null}
+        <div className="login-title-row">
+          <h1 className="title">Sleep &amp; Wake Log</h1>
+          {mode === "signin" ? <p className="muted login-total-users-inline">(total users: {totalUsersLabel})</p> : null}
+        </div>
+
         <p className="muted login-mode-text">{mode === "signin" ? "Sign in" : "Create account"} with email and password.</p>
 
         <form onSubmit={handleSubmit} className="stack">
           <label>
-            <div className="field-label">Email</div>
+            <div className="field-label field-label-login">Email</div>
             <input
               className="input"
               type="email"
@@ -150,7 +153,7 @@ export default function LoginPage() {
           </label>
 
           <label>
-            <div className="field-label">Password</div>
+            <div className="field-label field-label-login">Password</div>
             <input
               className="input"
               type="password"
