@@ -23,6 +23,12 @@ export default function HistoryPage() {
   const [clearing, setClearing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hasRecords = sleepTimes.length > 0 || wakeTimes.length > 0;
+  const todayKst = kstTodayString();
+  const selectedWeekday = new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    timeZone: "Asia/Seoul"
+  }).format(new Date(`${selectedDate}T00:00:00+09:00`));
+  const dateLabelClass = selectedDate === todayKst ? "date-label date-label-today" : "date-label";
 
   const sleepSuffix = (eventTime: string, createdAt: string) => {
     const diffMinutes = (new Date(eventTime).getTime() - new Date(createdAt).getTime()) / (60 * 1000);
@@ -177,7 +183,7 @@ export default function HistoryPage() {
           </button>
         </div>
 
-        <div className="date-label">{selectedDate}</div>
+        <div className={dateLabelClass}>{`${selectedDate} (${selectedWeekday})`}</div>
 
         <button
           className="subtle-btn danger-btn"

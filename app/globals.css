@@ -224,3 +224,7 @@ main {
 .field-label-login {
   margin-bottom: 3px;
 }
+
+.date-label-today {
+  color: #5AA9FF;
+}
