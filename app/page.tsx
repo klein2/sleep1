@@ -143,14 +143,14 @@ export default function HomePage() {
           >
             Wake Up
           </button>
+
+          {toast ? (
+            <div className={`toast toast-inline ${toast.kind === "success" ? "toast-success" : "toast-error"}`}>
+              {toast.message}
+            </div>
+          ) : null}
         </div>
       </div>
-
-      {toast ? (
-        <div className={`toast ${toast.kind === "success" ? "toast-success" : "toast-error"}`}>
-          {toast.message}
-        </div>
-      ) : null}
     </main>
   );
 }

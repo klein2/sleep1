@@ -228,3 +228,9 @@ main {
 .date-label-today {
   color: #5AA9FF;
 }
+
+.toast-inline {
+  position: static;
+  transform: none;
+  margin: 32px auto 0;
+}
